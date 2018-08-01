@@ -3,30 +3,33 @@ using System.Collections.Generic;
 using System.Linq;
 using TodoApi.Shared.Models;
 using TodoApi.Shared;
+using Todo.server;
 
 namespace Todo.Web.Controllers{
     [Route("api/[controller]")]
     [ApiController]
     public class TodoController : ControllerBase {
-        private readonly TodoContext _context;
-        public TodoController(TodoContext context){
+        private readonly TodoServer _context;
+        public TodoController(TodoServer context) { 
             _context = context;
-            if(_context.TodoItems.Count() < 5 ){
+            
+            if(_context.Getall().Result.Count() < 5 ){
                 for(int i = 0; i<5;++i){
-                _context.TodoItems.Add(new TodoItem {Name = "Item number" + i});
-                _context.SaveChanges();
+                _context.Create(new TodoItem {Name = "Item number" + i});
                 }
             }
         }
 
         [HttpGet]
-        public ActionResult<List<TodoItem>> GetAll(){
-            return _context.TodoItems.ToList();
+        public ActionResult<List<TodoItem>> GetAll() {
+
+            var ToDos = _context.Getall();
+            return ToDos.Result;
         }
 
         [HttpGet("{id}", Name = "GetTodo")]
         public ActionResult<TodoItem> GetById(long id){
-            var item = _context.TodoItems.Find(id);
+            var item = _context.Getbyid(id);
             if(item == null){
                 return NotFound();
             }
@@ -35,22 +38,19 @@ namespace Todo.Web.Controllers{
 
         [HttpPost]
         public IActionResult Create(TodoItem item){
-            _context.TodoItems.Add(item);
-            _context.SaveChanges();
-            return CreatedAtRoute("GetTodo", new { id = item.Id}, item);
+            TodoItem _item = _context.Create(item);
+            return CreatedAtRoute("GetTodo", new { id = _item.Id}, _item);
         }
 
         [HttpPut("{id}")]
         public IActionResult Update(long id, TodoItem item){
 
-            var todo = _context.TodoItems.Find(id);
+            var todo = _context.Update(id, item);
+  
             if(todo == null){
                 return NotFound();
             }
-            todo.IsComplete = item.IsComplete;
-            todo.Name = item.Name;
-            _context.TodoItems.Update(todo);
-            _context.SaveChanges();
+
             return NoContent();
         }
     }

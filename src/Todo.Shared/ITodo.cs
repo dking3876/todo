@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using TodoApi.Shared.Models;
 using Microsoft.AspNetCore;
+using System.Threading.Tasks;
+
 namespace TodoApi.Shared
 {
     public interface ITodo
     {
-        List<TodoItem> Getall();
+        Task<List<TodoItem>> Getall();
 
         List<TodoItem> Getall(bool IsComplete, int limit = 5, int offset = 0);
 
@@ -14,7 +16,7 @@ namespace TodoApi.Shared
 
         TodoItem Create(TodoItem item);
 
-        void Update(long id, TodoItem item);
+        TodoItem Update(long id, TodoItem item);
     }
 
 }

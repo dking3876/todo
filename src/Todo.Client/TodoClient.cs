@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using System.Web;
 using TodoApi.Shared;
 using TodoApi.Shared.Models;
 
@@ -13,9 +16,13 @@ namespace Todo.Client
             throw new NotImplementedException();
         }
 
-        public List<TodoItem> Getall()
+        public async Task<List<TodoItem>> Getall()
         {
             //make api call to the webapi and return the list of todos
+            HttpClient request = new HttpClient();
+            HttpResponseMessage response = await request.GetAsync("http://localhost:56576/api/todos");
+            
+
             throw new NotImplementedException();
         }
 
@@ -29,7 +36,7 @@ namespace Todo.Client
             throw new NotImplementedException();
         }
 
-        public void Update(long id, TodoItem item)
+        public TodoItem Update(long id, TodoItem item)
         {
             throw new NotImplementedException();
         }
