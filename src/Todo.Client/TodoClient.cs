@@ -7,7 +7,6 @@ using System.Web;
 using TodoApi.Shared;
 using TodoApi.Shared.Models;
 using Newtonsoft.Json;
-using NodaTime.Serialization.JsonNet;
 
 namespace Todo.Client
 {
@@ -24,11 +23,7 @@ namespace Todo.Client
             HttpClient request = new HttpClient();
             HttpResponseMessage response = await request.GetAsync("http://localhost:56576/api/todos");
             var content = await response.Content.ReadAsStringAsync();
-            var jsonSerialiserSettings = new JsonSerializerSettings();
-
-            var deserialisedObject = JsonConvert.DeserializeObject<List<TodoItem>>(content, jsonSerialiserSettings);
-
-            return deserialisedObject;
+            return DeserializeData<List<TodoItem>>(content);
             
         }
 
@@ -45,6 +40,15 @@ namespace Todo.Client
         public TodoItem Update(long id, TodoItem item)
         {
             throw new NotImplementedException();
+        }
+
+        private T DeserializeData<T>(string data)
+        {
+            var jsonSerialiserSettings = new JsonSerializerSettings();
+
+            var deserialisedObject = JsonConvert.DeserializeObject<T>(data, jsonSerialiserSettings);
+
+            return deserialisedObject;
         }
     }
 }
