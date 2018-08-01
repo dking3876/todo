@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using TodoApi.Shared.Models;
+using TodoApi.Shared;
 
 namespace Todo.Web.Controllers{
     [Route("api/[controller]")]
@@ -39,7 +40,7 @@ namespace Todo.Web.Controllers{
             return CreatedAtRoute("GetTodo", new { id = item.Id}, item);
         }
 
-        [HttpPutAttribute("{id}")]
+        [HttpPut("{id}")]
         public IActionResult Update(long id, TodoItem item){
 
             var todo = _context.TodoItems.Find(id);
