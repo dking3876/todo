@@ -11,7 +11,9 @@ namespace Todo.server
     {
         private readonly TodoContext _context;
 
-        public TodoServer(TodoContext contex) { }
+        public TodoServer(TodoContext contex) {
+            _context = contex;
+        }
 
         public TodoItem Create(TodoItem item)
         {
@@ -51,6 +53,7 @@ namespace Todo.server
             }
             catch(ContextMarshalException e)
             {
+                System.Console.Write(e);
                 // handle errors
             }
             return item;

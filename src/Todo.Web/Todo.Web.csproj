@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Todo.Database\Todo.Database.csproj" />
+    <ProjectReference Include="..\Todo.server\Todo.server.csproj" />
     <ProjectReference Include="..\Todo.Shared\Todo.Shared.csproj" />
   </ItemGroup>
 </Project>

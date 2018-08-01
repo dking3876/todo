@@ -9,8 +9,8 @@ namespace Todo.Web.Controllers{
     [Route("api/[controller]")]
     [ApiController]
     public class TodoController : ControllerBase {
-        private readonly TodoServer _context;
-        public TodoController(TodoServer context) { 
+        private readonly ITodo _context;
+        public TodoController(ITodo context) { 
             _context = context;
             
             if(_context.Getall().Result.Count() < 5 ){

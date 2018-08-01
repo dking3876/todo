@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Web;
 using TodoApi.Shared;
 using TodoApi.Shared.Models;
+using Newtonsoft.Json;
+using NodaTime.Serialization.JsonNet;
 
 namespace Todo.Client
 {
@@ -21,9 +23,13 @@ namespace Todo.Client
             //make api call to the webapi and return the list of todos
             HttpClient request = new HttpClient();
             HttpResponseMessage response = await request.GetAsync("http://localhost:56576/api/todos");
-            
+            var content = await response.Content.ReadAsStringAsync();
+            var jsonSerialiserSettings = new JsonSerializerSettings();
 
-            throw new NotImplementedException();
+            var deserialisedObject = JsonConvert.DeserializeObject<List<TodoItem>>(content, jsonSerialiserSettings);
+
+            return deserialisedObject;
+            
         }
 
         public List<TodoItem> Getall(bool IsComplete, int limit = 5, int offset = 0)
