@@ -12,7 +12,9 @@ namespace Todo.Client
 {
     public class TodoClient : ITodo
     {
-        public TodoItem Create(TodoItem item)
+        private string url = "http://localhost:56576/api/";
+
+        public Task<TodoItem> Create(TodoItem item)
         {
             throw new NotImplementedException();
         }
@@ -21,23 +23,41 @@ namespace Todo.Client
         {
             //make api call to the webapi and return the list of todos
             HttpClient request = new HttpClient();
-            HttpResponseMessage response = await request.GetAsync("http://localhost:56576/api/todos");
+            HttpResponseMessage response = await request.GetAsync(this.url + "todo");
             var content = await response.Content.ReadAsStringAsync();
-            return DeserializeData<List<TodoItem>>(content);
-            
+            List<TodoItem> todos = DeserializeData<List<TodoItem>>(content);
+            return todos;
+
         }
 
-        public List<TodoItem> Getall(bool IsComplete, int limit = 5, int offset = 0)
+        public async Task<List<TodoItem>> Getall(bool IsComplete = false, int limit = 5, int offset = 0)
         {
+            Dictionary<string, string> _query = new Dictionary<string, string>()
+            {
+                { "IsComplete", IsComplete.ToString() },
+                { "limit", limit.ToString() },
+                { "offset", offset.ToString() }
+            };
+            string url = this.url + "todo?" + this.QueryString(_query);
+            HttpClient request = new HttpClient();
+            HttpResponseMessage response = await request.GetAsync(url);
+            var content = await response.Content.ReadAsStringAsync();
+            List<TodoItem> todos = DeserializeData<List<TodoItem>>(content);
+            return todos;
+
             throw new NotImplementedException();
         }
 
-        public TodoItem Getbyid(long id)
+        public async Task<TodoItem> Getbyid(long id)
         {
-            throw new NotImplementedException();
+            HttpClient request = new HttpClient();
+            HttpResponseMessage response = await request.GetAsync(this.url + "todo/"+id);
+            var content = await response.Content.ReadAsStringAsync();
+            TodoItem todo = DeserializeData<TodoItem>(content);
+            return todo;
         }
 
-        public TodoItem Update(long id, TodoItem item)
+        public Task<TodoItem> Update(long id, TodoItem item)
         {
             throw new NotImplementedException();
         }
@@ -45,10 +65,20 @@ namespace Todo.Client
         private T DeserializeData<T>(string data)
         {
             var jsonSerialiserSettings = new JsonSerializerSettings();
-
             var deserialisedObject = JsonConvert.DeserializeObject<T>(data, jsonSerialiserSettings);
-
             return deserialisedObject;
         }
+
+
+        private string QueryString(IDictionary<string, string> dict)
+        {
+            var list = new List<string>();
+            foreach (var item in dict)
+            {
+                list.Add(item.Key + "=" + item.Value);
+            }
+            return string.Join("&", list);
+        }
+
     }
 }

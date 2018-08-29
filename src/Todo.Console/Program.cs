@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Todo.Client;
 using TodoApi.Shared.Models;
 
@@ -10,16 +12,30 @@ namespace Todo.Console
         static void Main(string[] args)
         {
            TodoClient TodoClient = new TodoClient();
-
-            System.Console.WriteLine("Hello World!");
-
-            List<TodoItem> todos = TodoClient.Getall();
-
-            foreach( TodoItem todo in todos)
+            try
             {
-                System.Console.WriteLine(todo.ToString());
-            }
+                System.Console.WriteLine("Hello World!");
 
+                List<TodoItem> todos = TodoClient.Getall().Result;
+
+
+                System.Console.WriteLine(" after get all new attempt");
+                foreach (TodoItem todo in todos)
+                {
+                    System.Console.WriteLine(todo.Name);
+                }
+            }
+            catch (Exception e){
+                System.Console.WriteLine(e.ToString());
+            }
+        }
+        private T DeserializeData<T>(string data)
+        {
+
+            var jsonSerialiserSettings = new JsonSerializerSettings();
+
+            var deserialisedObject = JsonConvert.DeserializeObject<T>(data, jsonSerialiserSettings);
+            return deserialisedObject;
         }
     }
 }

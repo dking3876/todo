@@ -24,8 +24,6 @@ namespace Todo.server
 
         public Task<List<TodoItem>> Getall()
         {
-            //List<TodoItem> items = await _context.TodoItems.ToList();
-            //return await _context.TodoItems.ToList();
             return Task.Run(() => _context.TodoItems.ToList());
         }
 

@@ -10,13 +10,13 @@ namespace TodoApi.Shared
     {
         Task<List<TodoItem>> Getall();
 
-        List<TodoItem> Getall(bool IsComplete, int limit = 5, int offset = 0);
+        Task<List<TodoItem>> Getall(bool IsComplete, int limit = 5, int offset = 0);
 
-        TodoItem Getbyid(long id);
+        Task<TodoItem> Getbyid(long id);
 
-        TodoItem Create(TodoItem item);
+        Task<TodoItem> Create(TodoItem item);
 
-        TodoItem Update(long id, TodoItem item);
+        Task<TodoItem> Update(long id, TodoItem item);
     }
 
 }
