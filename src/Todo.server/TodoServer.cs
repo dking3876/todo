@@ -15,11 +15,11 @@ namespace Todo.server
             _context = contex;
         }
 
-        public TodoItem Create(TodoItem item)
+        public Task<TodoItem> Create(TodoItem item)
         {
             _context.TodoItems.Add(item);
             _context.SaveChanges();
-            return item;
+            return Task.Run(()=>item);
         }
 
         public Task<List<TodoItem>> Getall()
@@ -27,18 +27,18 @@ namespace Todo.server
             return Task.Run(() => _context.TodoItems.ToList());
         }
 
-        public List<TodoItem> Getall(bool IsComplete, int limit = 5, int offset = 0)
+        public Task<List<TodoItem>> Getall(bool IsComplete, int limit = 5, int offset = 0)
         {
-            return _context.TodoItems.ToList();
+            return Task.Run(()=>_context.TodoItems.ToList());
         }
 
-        public TodoItem Getbyid(long id)
+        public Task<TodoItem> Getbyid(long id)
         {
             var item = _context.TodoItems.Find(id);
-            return item;
+            return Task.Run(()=>item);
         }
 
-        public TodoItem Update(long id, TodoItem item)
+        public Task<TodoItem> Update(long id, TodoItem item)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace Todo.server
                 System.Console.Write(e);
                 // handle errors
             }
-            return item;
+            return Task.Run(()=>item);
         }
     }
 }

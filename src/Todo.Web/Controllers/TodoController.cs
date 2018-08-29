@@ -33,12 +33,12 @@ namespace Todo.Web.Controllers{
             if(item == null){
                 return NotFound();
             }
-            return item;
+            return item.Result;
         }
 
         [HttpPost]
         public IActionResult Create(TodoItem item){
-            TodoItem _item = _context.Create(item);
+            TodoItem _item = _context.Create(item).Result;
             return CreatedAtRoute("GetTodo", new { id = _item.Id}, _item);
         }
 

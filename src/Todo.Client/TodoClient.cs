@@ -14,9 +14,21 @@ namespace Todo.Client
     {
         private string url = "http://localhost:56576/api/";
 
-        public Task<TodoItem> Create(TodoItem item)
+        public async Task<TodoItem> Create(TodoItem item)
         {
-            throw new NotImplementedException();
+            var content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("IsComplete", item.IsComplete.ToString()),
+                new KeyValuePair<string, string>("Name", item.Name)
+            });
+
+            HttpClient request = new HttpClient();
+            var result = await request.PostAsync(this.url + "todo", new StringContent( content.ToString(), Encoding.UTF8, "application/json" ));
+            string resultContent = await result.Content.ReadAsStringAsync();
+            TodoItem todo = DeserializeData<TodoItem>(resultContent);
+            return todo;
+            
+            //var content = new FormUrlEncodedContent(item. );
         }
 
         public async Task<List<TodoItem>> Getall()

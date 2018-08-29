@@ -16,6 +16,13 @@ namespace Todo.Console
             {
                 System.Console.WriteLine("Hello World!");
 
+                //TodoItem todo = new TodoItem();
+                //todo.Name = "a fresh one";
+                //todo.IsComplete = false;
+                //var item = TodoClient.Create(todo).Result;
+                //System.Console.WriteLine(item.Name);
+                //item.Wait();
+
                 List<TodoItem> todos = TodoClient.Getall().Result;
 
 
