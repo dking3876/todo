@@ -23,7 +23,7 @@ namespace Todo.Client
             });
 
             HttpClient request = new HttpClient();
-            var result = await request.PostAsync(this.url + "todo", new StringContent( content.ToString(), Encoding.UTF8, "application/json" ));
+            var result = await request.PostAsync(this.url + "todo", new StringContent( JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json" ));
             string resultContent = await result.Content.ReadAsStringAsync();
             TodoItem todo = DeserializeData<TodoItem>(resultContent);
             return todo;

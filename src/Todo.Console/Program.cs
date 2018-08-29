@@ -16,21 +16,21 @@ namespace Todo.Console
             {
                 System.Console.WriteLine("Hello World!");
 
-                //TodoItem todo = new TodoItem();
-                //todo.Name = "a fresh one";
-                //todo.IsComplete = false;
-                //var item = TodoClient.Create(todo).Result;
-                //System.Console.WriteLine(item.Name);
-                //item.Wait();
+                TodoItem todo = new TodoItem();
+                todo.Name = "a fresh one";
+                todo.IsComplete = false;
+                var item = TodoClient.Create(todo).Result;
+                System.Console.WriteLine(item.Name);
+          
 
-                List<TodoItem> todos = TodoClient.Getall().Result;
+                //List<TodoItem> todos = TodoClient.Getall().Result;
 
 
-                System.Console.WriteLine(" after get all new attempt");
-                foreach (TodoItem todo in todos)
-                {
-                    System.Console.WriteLine(todo.Name);
-                }
+                //System.Console.WriteLine(" after get all new attempt");
+                //foreach (TodoItem todo in todos)
+                //{
+                //    System.Console.WriteLine(todo.Name);
+                //}
             }
             catch (Exception e){
                 System.Console.WriteLine(e.ToString());
