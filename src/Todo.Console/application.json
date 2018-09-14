@@ -1,0 +1,5 @@
+﻿{
+  "TodoApp": {
+    "apiUrl": "http://localhost:56576/api/"
+  }
+}

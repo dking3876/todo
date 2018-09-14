@@ -4,49 +4,97 @@ using System.Linq;
 using System.Threading.Tasks;
 using TodoApi.Shared;
 using TodoApi.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Todo.server
 {
     public class TodoServer : ITodo
     {
-        private readonly TodoContext _context;
+        private readonly TodoContext _TodoContext;
+        private readonly UserContext _UserContext;
 
-        public TodoServer(TodoContext contex) {
-            _context = contex;
+        public TodoServer(TodoContext TContext, UserContext UContext) {
+            _TodoContext = TContext;
+            _UserContext = UContext;
         }
 
-        public Task<TodoItem> Create(TodoItem item)
+        public async Task<TodoItemPublic> Create(TodoItemPublic item)
         {
-            _context.TodoItems.Add(item);
-            _context.SaveChanges();
-            return Task.Run(()=>item);
+            //@todo use automapper 
+            TodoItemPrivate TodoItem = new TodoItemPrivate() { Name = item.Name, IsComplete = item.IsComplete, UserId = item.User.Id };
+
+
+            await _TodoContext.TodoItems.AddAsync(TodoItem);
+            _TodoContext.SaveChanges();
+            return item;
         }
 
-        public Task<List<TodoItem>> Getall()
+        public async Task<List<TodoItemPublic>> Getall()
         {
-            return Task.Run(() => _context.TodoItems.ToList());
+            //@todo use automapper
+            List<TodoItemPrivate> TodoPrivate = await _TodoContext.TodoItems.ToListAsync();
+            List<TodoItemPublic> TodoPublic = new List<TodoItemPublic>();
+
+            foreach(TodoItemPrivate TodoItem in TodoPrivate)
+            {
+                TodoPublic.Add(new TodoItemPublic()
+                {
+                    Id = TodoItem.Id,
+                    Name = TodoItem.Name,
+                    IsComplete = TodoItem.IsComplete,
+                    User = _UserContext.User.Find(TodoItem.UserId)
+                });
+            }
+
+
+            return TodoPublic;
         }
 
-        public Task<List<TodoItem>> Getall(bool IsComplete, int limit = 5, int offset = 0)
+        public async Task<List<TodoItemPublic>> Getall(bool IsComplete, int limit = 5, int offset = 0)
         {
-            return Task.Run(()=>_context.TodoItems.ToList());
+            //@todo use automapper
+            List<TodoItemPrivate> TodoPrivate = await _TodoContext.TodoItems.ToListAsync();
+            List<TodoItemPublic> TodoPublic = new List<TodoItemPublic>();
+
+            foreach (TodoItemPrivate TodoItem in TodoPrivate)
+            {
+                TodoPublic.Add(new TodoItemPublic()
+                {
+                    Id = TodoItem.Id,
+                    Name = TodoItem.Name,
+                    IsComplete = TodoItem.IsComplete,
+                    User = _UserContext.User.Find(TodoItem.UserId)
+                });
+            }
+
+
+            return TodoPublic;
         }
 
-        public Task<TodoItem> Getbyid(long id)
+        public async Task<TodoItemPublic> Getbyid(int id)
         {
-            var item = _context.TodoItems.Find(id);
-            return Task.Run(()=>item);
+            var TodoPrivate = await _TodoContext.TodoItems.FindAsync(id);
+
+            TodoItemPublic TodoPublic = new TodoItemPublic()
+            {
+                Id = TodoPrivate.Id,
+                Name = TodoPrivate.Name,
+                IsComplete = TodoPrivate.IsComplete,
+                User = _UserContext.User.Find(TodoPrivate.UserId)
+            };
+            return TodoPublic;
         }
 
-        public Task<TodoItem> Update(long id, TodoItem item)
+        public async Task<TodoItemPublic> Update(int id, TodoItemPublic item)
         {
             try
             {
-                var todo = _context.TodoItems.Find(id);
+                var todo = _TodoContext.TodoItems.Find(id);
                 todo.IsComplete = item.IsComplete;
                 todo.Name = item.Name;
-                _context.TodoItems.Update(todo);
-                _context.SaveChanges();
+                todo.UserId = item.User.Id;
+                _TodoContext.TodoItems.Update(todo);
+                await _TodoContext.SaveChangesAsync();
   
             }
             catch(ContextMarshalException e)
@@ -54,7 +102,7 @@ namespace Todo.server
                 System.Console.Write(e);
                 // handle errors
             }
-            return Task.Run(()=>item);
+            return item;
         }
     }
 }

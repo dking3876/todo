@@ -8,6 +8,6 @@ namespace TodoApi.Shared.Models{
             public TodoContext(DbContextOptions<TodoContext> options) : base (options){
 
             }
-            public DbSet<TodoItem> TodoItems {get;set;}
+            public DbSet<TodoItemPrivate> TodoItems {get;set;}
     }
 }

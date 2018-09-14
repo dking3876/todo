@@ -7,42 +7,52 @@ using System.Web;
 using TodoApi.Shared;
 using TodoApi.Shared.Models;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace Todo.Client
 {
     public class TodoClient : ITodo
     {
-        private string url = "http://localhost:56576/api/";
-
-        public async Task<TodoItem> Create(TodoItem item)
+        private IConfiguration _configuration;
+        public TodoClient(IConfiguration Configuration)
         {
-            var content = new FormUrlEncodedContent(new[]
-            {
-                new KeyValuePair<string, string>("IsComplete", item.IsComplete.ToString()),
-                new KeyValuePair<string, string>("Name", item.Name)
-            });
+            _configuration = Configuration;
+            //do url configuration with injection
+            _url = Configuration.GetSection("TodoApp:ApiUrl").Value;
+
+        }
+        private string _url;
+
+        public async Task<TodoItemPublic> Create(TodoItemPublic item)
+        {
+            //var content = new FormUrlEncodedContent(new[]
+            //{
+            //    new KeyValuePair<string, string>("IsComplete", item.IsComplete.ToString()),
+            //    new KeyValuePair<string, string>("Name", item.Name),
+            //    new KeyValuePair<string, string>("User", item.User);
+            //});
 
             HttpClient request = new HttpClient();
-            var result = await request.PostAsync(this.url + "todo", new StringContent( JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json" ));
+            var result = await request.PostAsync(this._url + "todo", new StringContent( JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json" ));
             string resultContent = await result.Content.ReadAsStringAsync();
-            TodoItem todo = DeserializeData<TodoItem>(resultContent);
+            TodoItemPublic todo = DeserializeData<TodoItemPublic>(resultContent);
             return todo;
             
             //var content = new FormUrlEncodedContent(item. );
         }
 
-        public async Task<List<TodoItem>> Getall()
+        public async Task<List<TodoItemPublic>> Getall()
         {
             //make api call to the webapi and return the list of todos
             HttpClient request = new HttpClient();
-            HttpResponseMessage response = await request.GetAsync(this.url + "todo");
+            HttpResponseMessage response = await request.GetAsync(this._url + "todo");
             var content = await response.Content.ReadAsStringAsync();
-            List<TodoItem> todos = DeserializeData<List<TodoItem>>(content);
+            List<TodoItemPublic> todos = DeserializeData<List<TodoItemPublic>>(content);
             return todos;
 
         }
 
-        public async Task<List<TodoItem>> Getall(bool IsComplete = false, int limit = 5, int offset = 0)
+        public async Task<List<TodoItemPublic>> Getall(bool IsComplete = false, int limit = 5, int offset = 0)
         {
             Dictionary<string, string> _query = new Dictionary<string, string>()
             {
@@ -50,26 +60,26 @@ namespace Todo.Client
                 { "limit", limit.ToString() },
                 { "offset", offset.ToString() }
             };
-            string url = this.url + "todo?" + this.QueryString(_query);
+            string url = this._url + "todo?" + this.QueryString(_query);
             HttpClient request = new HttpClient();
             HttpResponseMessage response = await request.GetAsync(url);
             var content = await response.Content.ReadAsStringAsync();
-            List<TodoItem> todos = DeserializeData<List<TodoItem>>(content);
+            List<TodoItemPublic> todos = DeserializeData<List<TodoItemPublic>>(content);
             return todos;
 
             throw new NotImplementedException();
         }
 
-        public async Task<TodoItem> Getbyid(long id)
+        public async Task<TodoItemPublic> Getbyid(int id)
         {
             HttpClient request = new HttpClient();
-            HttpResponseMessage response = await request.GetAsync(this.url + "todo/"+id);
+            HttpResponseMessage response = await request.GetAsync(this._url + "todo/"+id);
             var content = await response.Content.ReadAsStringAsync();
-            TodoItem todo = DeserializeData<TodoItem>(content);
+            TodoItemPublic todo = DeserializeData<TodoItemPublic>(content);
             return todo;
         }
 
-        public Task<TodoItem> Update(long id, TodoItem item)
+        public Task<TodoItemPublic> Update(int id, TodoItemPublic item)
         {
             throw new NotImplementedException();
         }

@@ -15,20 +15,28 @@ namespace Todo.Web.Controllers{
             
             if(_context.Getall().Result.Count() < 5 ){
                 for(int i = 0; i<5;++i){
-                _context.Create(new TodoItem {Name = "Item number" + i});
+                _context.Create(new TodoItemPublic {
+                    Name = "Item number" + i,
+                    User = new User {
+                        Id = 4,
+                        FirstName = "",
+                        LastName = "",
+                        Fullname = ""
+                    }
+                });
                 }
             }
         }
 
         [HttpGet]
-        public ActionResult<List<TodoItem>> GetAll() {
+        public ActionResult<List<TodoItemPublic>> GetAll() {
 
             var ToDos = _context.Getall();
             return ToDos.Result;
         }
 
         [HttpGet("{id}", Name = "GetTodo")]
-        public ActionResult<TodoItem> GetById(long id){
+        public ActionResult<TodoItemPublic> GetById(int id){
             var item = _context.Getbyid(id);
             if(item == null){
                 return NotFound();
@@ -37,13 +45,13 @@ namespace Todo.Web.Controllers{
         }
 
         [HttpPost]
-        public IActionResult Create(TodoItem item){
-            TodoItem _item = _context.Create(item).Result;
+        public IActionResult Create(TodoItemPublic item){
+            TodoItemPublic _item = _context.Create(item).Result;
             return CreatedAtRoute("GetTodo", new { id = _item.Id}, _item);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, TodoItem item){
+        public IActionResult Update(int id, TodoItemPublic item){
 
             var todo = _context.Update(id, item);
   

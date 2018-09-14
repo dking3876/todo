@@ -17,9 +17,23 @@ namespace Todo.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        //public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            //Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+            if (env.IsDevelopment())
+            {
+ 
+                builder.AddUserSecrets("1c9cb645-4d07-4eb5-ad9c-2491fb9262ba");
+            }
+
+            builder.AddEnvironmentVariables();
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -28,8 +42,9 @@ namespace Todo.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-
+    
             services.AddDbContext<TodoContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<UserContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<ITodo, TodoServer>();
                        
