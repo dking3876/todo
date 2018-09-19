@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using TodoApi.Shared.Models;
 using TodoApi.Shared;
 using Todo.server;
-
+using Todo.server.AutoMapperConfiguration;
 namespace Todo.Web
 {
     public class Startup
@@ -47,6 +47,9 @@ namespace Todo.Web
             services.AddDbContext<UserContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<ITodo, TodoServer>();
+
+            MapperIntializer.Initialize();
+           
                        
         }
 

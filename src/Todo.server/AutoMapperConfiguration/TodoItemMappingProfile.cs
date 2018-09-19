@@ -17,7 +17,8 @@ namespace Todo.server.AutoMapperConfiguration
             this.CreateMap<int, User>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src));
 
-
+            this.CreateMap<TodoItemPublic, TodoItemPrivate>()
+                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.Id));
 
         }
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using TodoApi.Shared;
 using TodoApi.Shared.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Data.Entity;
+using AutoMapper;
 
 namespace Todo.server
 {
@@ -21,7 +21,6 @@ namespace Todo.server
 
         public async Task<TodoItemPublic> Create(TodoItemPublic item)
         {
-            //@todo use automapper 
             TodoItemPrivate TodoItem = new TodoItemPrivate() { Name = item.Name, IsComplete = item.IsComplete, UserId = item.User.Id };
 
 
@@ -32,42 +31,27 @@ namespace Todo.server
 
         public async Task<List<TodoItemPublic>> Getall()
         {
-            //@todo use automapper
             List<TodoItemPrivate> TodoPrivate = await _TodoContext.TodoItems.ToListAsync();
-            List<TodoItemPublic> TodoPublic = new List<TodoItemPublic>();
 
-            foreach(TodoItemPrivate TodoItem in TodoPrivate)
-            {
-                TodoPublic.Add(new TodoItemPublic()
-                {
-                    Id = TodoItem.Id,
-                    Name = TodoItem.Name,
-                    IsComplete = TodoItem.IsComplete,
-                    User = _UserContext.User.Find(TodoItem.UserId)
-                });
-            }
+            List<TodoItemPublic> TodoPublic = Mapper.Map<List<TodoItemPublic>>(TodoPrivate);
 
+            TodoPublic.ForEach(TodoItem =>{
+                   TodoItem.User = _UserContext.User.Find(TodoItem.User.Id);
+             });
 
             return TodoPublic;
         }
 
         public async Task<List<TodoItemPublic>> Getall(bool IsComplete, int limit = 5, int offset = 0)
         {
-            //@todo use automapper
-            List<TodoItemPrivate> TodoPrivate = await _TodoContext.TodoItems.ToListAsync();
-            List<TodoItemPublic> TodoPublic = new List<TodoItemPublic>();
+ 
+            List<TodoItemPrivate> TodoPrivate = await _TodoContext.TodoItems.Where( _item=>_item.IsComplete).Take(limit).ToListAsync();
 
-            foreach (TodoItemPrivate TodoItem in TodoPrivate)
-            {
-                TodoPublic.Add(new TodoItemPublic()
-                {
-                    Id = TodoItem.Id,
-                    Name = TodoItem.Name,
-                    IsComplete = TodoItem.IsComplete,
-                    User = _UserContext.User.Find(TodoItem.UserId)
-                });
-            }
+            List<TodoItemPublic> TodoPublic = Mapper.Map<List<TodoItemPublic>>(TodoPrivate);
 
+            TodoPublic.ForEach(TodoItem => {
+                TodoItem.User = _UserContext.User.Find(TodoItem.User.Id);
+            });
 
             return TodoPublic;
         }
@@ -76,13 +60,9 @@ namespace Todo.server
         {
             var TodoPrivate = await _TodoContext.TodoItems.FindAsync(id);
 
-            TodoItemPublic TodoPublic = new TodoItemPublic()
-            {
-                Id = TodoPrivate.Id,
-                Name = TodoPrivate.Name,
-                IsComplete = TodoPrivate.IsComplete,
-                User = _UserContext.User.Find(TodoPrivate.UserId)
-            };
+            TodoItemPublic TodoPublic = Mapper.Map<TodoItemPublic>(TodoPrivate);
+
+            TodoPublic.User = _UserContext.User.Find(TodoPublic.User.Id);
             return TodoPublic;
         }
 
@@ -90,20 +70,19 @@ namespace Todo.server
         {
             try
             {
-                var todo = _TodoContext.TodoItems.Find(id);
-                todo.IsComplete = item.IsComplete;
-                todo.Name = item.Name;
-                todo.UserId = item.User.Id;
-                _TodoContext.TodoItems.Update(todo);
+                TodoItemPrivate TodoPrivate = Mapper.Map<TodoItemPrivate>(item);
+
+                _TodoContext.TodoItems.Update(TodoPrivate);
                 await _TodoContext.SaveChangesAsync();
-  
+                return Getbyid(TodoPrivate.Id).Result;
+
             }
             catch(ContextMarshalException e)
             {
                 System.Console.Write(e);
                 // handle errors
             }
-            return item;
+            return null;
         }
     }
 }
