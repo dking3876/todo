@@ -13,6 +13,9 @@ using TodoApi.Shared.Models;
 using TodoApi.Shared;
 using Todo.server;
 using Todo.server.AutoMapperConfiguration;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+
 namespace Todo.Web
 {
     public class Startup
@@ -36,22 +39,38 @@ namespace Todo.Web
             Configuration = builder.Build();
         }
 
+        public IContainer ApplicationContainer { get; private set; }
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
     
             services.AddDbContext<TodoContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<UserContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<ITodo, TodoServer>();
+    
+
+            //services.AddScoped<ITodo, TodoServer>();
+
+            var builder = new ContainerBuilder();
+            builder.Populate(services);
+            builder.RegisterType<TodoServer>().As<ITodo>();
+
+            this.ApplicationContainer = builder.Build();
 
             MapperIntializer.Initialize();
-           
-                       
+
+            return new AutofacServiceProvider(this.ApplicationContainer);
         }
+
+        //public void ConfigureContainer(ContainerBuilder builder)
+        //{
+        //    builder.RegisterType<TodoServer>().As<ITodo>();
+
+        //}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
