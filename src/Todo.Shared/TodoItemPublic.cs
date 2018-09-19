@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NodaTime;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using TodoApi.Shared.Models;
@@ -10,5 +11,7 @@ namespace TodoApi.Shared.Models
         public int Id { get; set; }
         public bool IsComplete { get; set; }
         public User User { get; set; }
+        public Instant CreatedDate { get; set; }
+
     }
 }

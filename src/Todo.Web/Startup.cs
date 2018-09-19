@@ -15,6 +15,9 @@ using Todo.server;
 using Todo.server.AutoMapperConfiguration;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using NodaTime.Serialization.JsonNet;
+using NodaTime;
 
 namespace Todo.Web
 {
@@ -46,7 +49,13 @@ namespace Todo.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(options =>
+               {
+                   var settings = options.SerializerSettings;
+                   settings.DateParseHandling = DateParseHandling.None;
+                   settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+               });
     
             services.AddDbContext<TodoContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<UserContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));
