@@ -5,13 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Brafton.Http" Version="1.1.0" />
+    <PackageReference Include="Autofac" Version="4.9.0-beta1" />
     <PackageReference Include="Brafton.Http.RestClient" Version="1.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Todo.Shared\Todo.Shared.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0-preview3-35497" />
   </ItemGroup>
 
 </Project>

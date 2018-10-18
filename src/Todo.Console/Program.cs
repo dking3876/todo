@@ -38,7 +38,7 @@ namespace Todo.Console
                 List<TodoItemPublic> todos = TodoClient.Getall().Result;
 
 
-                System.Console.WriteLine(" after get all new attempt");
+                System.Console.WriteLine("after get all new attempt");
                 foreach (TodoItemPublic _todo in todos)
                 {
                     System.Console.WriteLine(_todo.Name);

@@ -14,7 +14,10 @@ namespace Todo.Client
     public class TodoClient : ITodo
     {
         private IConfiguration _configuration;
-        public TodoClient(IConfiguration Configuration)
+
+        private readonly ITodoConnection connection;
+
+        public TodoClient(IConfiguration Configuration, ITodoConnection connection )
         {
             _configuration = Configuration;
             //do url configuration with injection
@@ -25,12 +28,6 @@ namespace Todo.Client
 
         public async Task<TodoItemPublic> Create(TodoItemPublic item)
         {
-            //var content = new FormUrlEncodedContent(new[]
-            //{
-            //    new KeyValuePair<string, string>("IsComplete", item.IsComplete.ToString()),
-            //    new KeyValuePair<string, string>("Name", item.Name),
-            //    new KeyValuePair<string, string>("User", item.User);
-            //});
 
             HttpClient request = new HttpClient();
             var result = await request.PostAsync(this._url + "todo", new StringContent( JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json" ));
