@@ -17,24 +17,27 @@ namespace Todo.Client
 
         private readonly ITodoConnection connection;
 
-        public TodoClient(IConfiguration Configuration, ITodoConnection connection )
+        public TodoClient( ITodoConnection connection )
         {
-            _configuration = Configuration;
-            //do url configuration with injection
-            _url = Configuration.GetSection("TodoApp:ApiUrl").Value;
 
+            //do url configuration with injection
+            //_url = Configuration.GetSection("TodoApp:ApiUrl").Value;
+            _url = "http://localhost:56576/api/";
+
+            this.connection = connection;
+            
         }
         private string _url;
 
         public async Task<TodoItemPublic> Create(TodoItemPublic item)
         {
-
-            HttpClient request = new HttpClient();
-            var result = await request.PostAsync(this._url + "todo", new StringContent( JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json" ));
-            string resultContent = await result.Content.ReadAsStringAsync();
-            TodoItemPublic todo = DeserializeData<TodoItemPublic>(resultContent);
-            return todo;
-            
+            //var content = JsonConvert.SerializeObject(item);
+            //HttpClient request = new HttpClient();
+            //var result = await request.PostAsync(this._url + "todo", new StringContent( content, Encoding.UTF8, "application/json" ));
+            //string resultContent = await result.Content.ReadAsStringAsync();
+            //TodoItemPublic todo = DeserializeData<TodoItemPublic>(resultContent);
+            //return todo;
+            return await this.connection.PostAsync<TodoItemPublic>("todo", item, null);
             //var content = new FormUrlEncodedContent(item. );
         }
 

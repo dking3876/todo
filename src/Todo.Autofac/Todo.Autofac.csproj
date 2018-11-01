@@ -5,9 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.9.0-beta1" />
+    <PackageReference Include="Autofac" Version="4.8.1" />
+    <PackageReference Include="Brafton.Common" Version="3.0.0" />
     <PackageReference Include="Brafton.Http.RestClient" Version="1.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.0-preview3-35497" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0-preview3-35497" />
+    <PackageReference Include="Skynet.Shared" Version="3.4.0-unstable0004" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Todo.Client\Todo.Client.csproj" />
   </ItemGroup>
 
 </Project>

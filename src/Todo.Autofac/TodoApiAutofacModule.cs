@@ -26,11 +26,11 @@ namespace Todo.Autofac
             //Images Api connection
             builder.Register(c =>
             {
+
                 if (!c.IsRegistered<IOptions<TodoSettings>>())
                     throw new BraftonException("IOptions<Settings.TodoSettings>> needs to be registered to setup the client");
                 if (!c.IsRegistered<IOptions<SecuritySettings>>())
                     throw new BraftonException("IOptions<Settings.SecuritySettings>> needs to be registered to setup the client");
-
                 var securityOptions = c.Resolve<IOptions<SecuritySettings>>().Value;
                 var todoSettings = c.Resolve<IOptions<TodoSettings>>().Value;
                 string DelegateToken = null;

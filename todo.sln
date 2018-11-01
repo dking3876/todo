@@ -16,7 +16,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo.Console", "src\Todo.Co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo.server", "src\Todo.server\Todo.server.csproj", "{16BF31C8-7289-4DAE-875B-0D283249E676}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todo.Autofac", "src\Todo.Autofac\Todo.Autofac.csproj", "{FB317999-BA17-4000-9CF4-7910E43B2F06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todo.Autofac", "src\Todo.Autofac\Todo.Autofac.csproj", "{FB317999-BA17-4000-9CF4-7910E43B2F06}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E396831-092A-4208-9759-182A074D6B42} = {4E396831-092A-4208-9759-182A074D6B42}
+		{F22657E7-448A-4333-9992-DF202E3F737D} = {F22657E7-448A-4333-9992-DF202E3F737D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
