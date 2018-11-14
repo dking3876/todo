@@ -8,6 +8,7 @@ using TodoApi.Shared;
 using TodoApi.Shared.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
+using NodaTime.Serialization.JsonNet;
 
 namespace Todo.Client
 {
@@ -31,13 +32,24 @@ namespace Todo.Client
 
         public async Task<TodoItemPublic> Create(TodoItemPublic item)
         {
-            //var content = JsonConvert.SerializeObject(item);
-            //HttpClient request = new HttpClient();
-            //var result = await request.PostAsync(this._url + "todo", new StringContent( content, Encoding.UTF8, "application/json" ));
-            //string resultContent = await result.Content.ReadAsStringAsync();
-            //TodoItemPublic todo = DeserializeData<TodoItemPublic>(resultContent);
-            //return todo;
-            return await this.connection.PostAsync<TodoItemPublic>("todo", item, null);
+
+            //var jsonSerialiserSettings = new JsonSerializerSettings();
+            //jsonSerialiserSettings.ConfigureForNodaTime(NodaTime.DateTimeZoneProviders.Tzdb);
+            var content = JsonConvert.SerializeObject(new
+            {
+                Name = item.Name,
+                IsComplete = item.IsComplete,
+                User = new
+                {
+                    Id = item.User.Id
+                }
+            });
+            HttpClient request = new HttpClient();
+            var result = await request.PostAsync(this._url + "todo", new StringContent(content, Encoding.UTF8, "application/json"));
+            string resultContent = await result.Content.ReadAsStringAsync();
+            TodoItemPublic todo = DeserializeData<TodoItemPublic>(resultContent);
+            return todo;
+            //return await this.connection.PostAsync<TodoItemPublic>("todo", item, null);
             //var content = new FormUrlEncodedContent(item. );
         }
 
@@ -47,7 +59,14 @@ namespace Todo.Client
             HttpClient request = new HttpClient();
             HttpResponseMessage response = await request.GetAsync(this._url + "todo");
             var content = await response.Content.ReadAsStringAsync();
-            List<TodoItemPublic> todos = DeserializeData<List<TodoItemPublic>>(content);
+            List<TodoItemPublic> todos = new List<TodoItemPublic>();
+            try
+            {
+                todos = DeserializeData<List<TodoItemPublic>>(content);
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
             return todos;
 
         }
@@ -86,9 +105,16 @@ namespace Todo.Client
 
         private T DeserializeData<T>(string data)
         {
-            var jsonSerialiserSettings = new JsonSerializerSettings();
+  
+                var jsonSerialiserSettings = new JsonSerializerSettings();
+
+            jsonSerialiserSettings.ConfigureForNodaTime(NodaTime.DateTimeZoneProviders.Tzdb);
+            //jsonSerialiserSettings.Converters.Add(NodaConverters.InstantConverter);
+            //jsonSerialiserSettings.Converters.Add(NodaConverters.IntervalConverter);
+            //jsonSerialiserSettings.Converters.Add(NodaConverters.DateIntervalConverter);
             var deserialisedObject = JsonConvert.DeserializeObject<T>(data, jsonSerialiserSettings);
-            return deserialisedObject;
+                return deserialisedObject;
+
         }
 
 

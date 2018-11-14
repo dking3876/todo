@@ -8,6 +8,7 @@
     <PackageReference Include="Brafton.Http" Version="1.1.0" />
     <PackageReference Include="Brafton.Http.RestClient" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="NodaTime.Serialization.JsonNet" Version="2.1.0-beta01" />
   </ItemGroup>
 
   <ItemGroup>

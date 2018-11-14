@@ -54,7 +54,7 @@ namespace Todo.Web
                {
                    var settings = options.SerializerSettings;
                    settings.DateParseHandling = DateParseHandling.None;
-                   settings.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                   settings.ConfigureForNodaTime(NodaTime.DateTimeZoneProviders.Tzdb);
                });
     
             services.AddDbContext<TodoContext>(options => options.UseMySql(Configuration.GetConnectionString("DefaultConnection")));

@@ -32,7 +32,7 @@ namespace Todo.Console
             var TodoClient = diContainer.Resolve<ITodo>();
             try
             {
-                
+
                 System.Console.WriteLine("Hello World!");
 
                 TodoItemPublic todo = new TodoItemPublic();
@@ -76,6 +76,7 @@ namespace Todo.Console
 
             var services = new ServiceCollection();
             services.AddOptions();
+            
       
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -92,13 +93,6 @@ namespace Todo.Console
             var container = containerBuilder.Build();
             return container;
         }
-        private T DeserializeData<T>(string data)
-        {
 
-            var jsonSerialiserSettings = new JsonSerializerSettings();
-
-            var deserialisedObject = JsonConvert.DeserializeObject<T>(data, jsonSerialiserSettings);
-            return deserialisedObject;
-        }
     }
 }
