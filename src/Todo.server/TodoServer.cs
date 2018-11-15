@@ -21,7 +21,12 @@ namespace Todo.server
 
         public async Task<TodoItemPublic> Create(TodoItemPublic item)
         {
-            TodoItemPrivate TodoItem = new TodoItemPrivate() { Name = item.Name, IsComplete = item.IsComplete, UserId = item.User.Id };
+            TodoItemPrivate TodoItem = new TodoItemPrivate() {
+                Name = item.Name,
+                IsComplete = item.IsComplete,
+                UserId = item.User.Id,
+                CreatedDate = item.CreatedDate.ToUnixTimeSeconds()
+            };
 
 
             await _TodoContext.TodoItems.AddAsync(TodoItem);

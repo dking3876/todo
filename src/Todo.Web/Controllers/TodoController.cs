@@ -45,8 +45,20 @@ namespace Todo.Web.Controllers{
         }
 
         [HttpPost]
-        public IActionResult Create(TodoItemPublic item){
-            TodoItemPublic _item = _context.Create(item).Result;
+        public IActionResult Create(CreateTodoItem item){
+            // build out the todo item
+            TodoItemPublic todo = new TodoItemPublic()
+            {
+                Name = item.Name,
+                IsComplete = false,
+                User = new User()
+                {
+                    Id = item.User.Id
+                },
+                CreatedDate = NodaTime.Instant.FromDateTimeUtc(System.DateTime.Now.ToUniversalTime())
+
+            };
+            TodoItemPublic _item = _context.Create(todo).Result;
             return CreatedAtRoute("GetTodo", new { id = _item.Id}, _item);
         }
 
